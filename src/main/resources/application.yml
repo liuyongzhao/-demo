@@ -9,8 +9,8 @@ zuul:
   prefix: /techouse #\u4e3azuul\u8bbe\u7f6e\u4e00\u4e2a\u516c\u5171\u7684\u524d\u7f00
   #ignoredServices: '*'
   routes:
-    cloud-client: #\u968f\u4fbf\u5b9a\u4e49\uff0c\u5f53\u4e0d\u5b58\u5728serviceId\u65f6\uff0c\u9ed8\u8ba4\u8be5\u503c\u4e3aserviceId\uff08\u5c31\u662f\u6ce8\u518c\u670d\u52a1\u7684\u540d\u79f0\uff0c\u5c5e\u6027spring.application.name\uff09
-      path: /usersystem/** #\u5339\u914d/techouse/usersystem/** \u5747\u8def\u7531\u5230cloud-client
+    cloud-provider: #\u968f\u4fbf\u5b9a\u4e49\uff0c\u5f53\u4e0d\u5b58\u5728serviceId\u65f6\uff0c\u9ed8\u8ba4\u8be5\u503c\u4e3aserviceId\uff08\u5c31\u662f\u6ce8\u518c\u670d\u52a1\u7684\u540d\u79f0\uff0c\u5c5e\u6027spring.application.name\uff09
+      path: /usersystem/** #\u5339\u914d/techouse/usersystem/** \u5747\u8def\u7531\u5230cloud-provider
       serviceId: cloud-client #\u6307\u5b9a\u8def\u7531\u5230\u7684serviceId
 ribbon:
   eureka:
@@ -18,4 +18,4 @@ ribbon:
 
 cloud-client:
   ribbon:
-    listOfServers: 127.0.0.1:8800 #\u4e3acloud-client\u670d\u52a1\u6307\u5b9a\u4e00\u7ec4\u670d\u52a1\u5730\u5740\uff0c\u5e94\u8be5\u662f\u7528\u4e8e\u8d1f\u8f7d\u5747\u8861
+    listOfServers: 127.0.0.1:8800 #\u4e3acloud-provider\u670d\u52a1\u6307\u5b9a\u4e00\u7ec4\u670d\u52a1\u5730\u5740\uff0c\u5e94\u8be5\u662f\u7528\u4e8e\u8d1f\u8f7d\u5747\u8861
