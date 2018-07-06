@@ -1,4 +1,120 @@
-demo for Eureka with Zuul and RibbonMQ
+工程简介：
+#开发需求
+
+1、实现服务注册、查询，调用示例、
+2、实现日志记录
+
+#实现流程
+##基于Spring boot的Demo
+采用Eureka来提供服务注册和发现功能
+设置3个角色：Eureka Server、Service Provider、Service Consumer
+
+###准备工作
+1、创建本地Spring Boot开发
+创建本地Spring Boot项目，并在application.yml配置相关参数
+```yml
+spring:
+  application:
+    name: config-server
+  cloud:
+    config:
+      server:
+        git:
+          uri:
+server:
+  port: 8888
+```
+2、添加spring-cloud-config-server依赖
+```xml
+<dependency>
+     <groupId>org.springframework.cloud</groupId>
+     <artifactId>spring-cloud-config-server</artifactId>
+ </dependency>
+```
+3、启动项目
+run项目src/main/java中的Application文件
+
+###Eureka Server
+1、增加Eureka Server依赖
+```xml
+<dependency>
+     <groupId>org.springframework.cloud</groupId>
+     <artifactId>spring-cloud-starter-eureka-server</artifactId>
+ </dependency>
+```
+2、启动Eureka Server
+在项目入口处添加@EnableEurekaServer
+```java
+@EnableEurekaServer
+@SpringBootApplication
+public class EurekaServiceApplication {
+  public static void main(String[] args) {
+    SpringApplication.run(EurekaServiceApplication.class, args);
+  }
+}
+```
+3、设置应用启动端口配置
+服务配置bootstrap.properties中添加设置
+```xml
+spring.application.name=eureka-service
+spring.cloud.config.uri=http://localhost:8888
+eureka.client.register-with-eureka=false
+eureka.client.fetch-registry=false
+```
+设置端口
+在eclipse中run configurations中，设置 端口.Dserver.port=8761
+4、启动
+http://localhost:8761
+<img src="http://img.blog.csdn.net/20161221133801659" alt="图片描述"/>
+
+###Service Provider
+1、增加Eureka Server依赖，同上，不再赘述
+2、启动Service Provider
+在项目入口处添加@EnableDiscoveryClient
+```java
+@EnableDiscoveryClient
+@SpringBootApplication
+public class ReservationServiceApplication {
+  public static void main(String[] args) {
+    SpringApplication.run(ReservationService.class, args);
+  }
+}
+3、服务配置bootstrap.yml中添加设置
+```yml
+spring:
+  application:
+    name: reservation-service
+  cloud:
+    config:
+      uri: http://localhost:8010
+```
+设置端口
+在eclipse中run configurations中，设置 端口.Dserver.port=8010
+4、启动
+http://localhost:8761
+
+###Service Consumer
+1、增加依赖及启动方式同上
+2、消费端通过dc.getInstances("reservation-service")获取注册服务
+```java
+@EnableDiscoveryClient
+@SpringBootApplication
+public class ReservationClientApplication {
+  @Bean
+  CommandLineRunner runner(DiscoveryClient dc) {
+    return args -> {
+      dc.getInstances("reservation-service")
+              .forEach(si -> System.out.println(String.format(
+                      "Found %s %s:%s", si.getServiceId(), si.getHost(), si.getPort())));
+    };
+  }
+  public static void main(String[] args) {
+    SpringApplication.run(ReservationClientApplication.class, args);
+  }
+}
+```
+
+运行方法提示（demo for Eureka with Zuul and RibbonMQ）：
 1.访问http://127.0.0.1:8080/test/1测试服务内部调用，且失败会调用fallback方法返回值。 
 2.访问http://127.0.0.1:8080/test/2测试服务内部调用，则正常调用cloud-client的服务。 
 3.我们可以使用统一入口，调用cloud-client服务： 
